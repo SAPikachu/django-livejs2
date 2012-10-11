@@ -2,11 +2,39 @@
 from __future__ import print_function
 
 import hashlib
+import re
 
 from django.utils.http import http_date
 from django.conf import settings
 from django.core.exceptions import MiddlewareNotUsed
 from django.contrib.staticfiles.handlers import StaticFilesHandler
+
+HTML_CONTENT_TYPES = ("text/html", "application/xhtml+xml")
+
+def inject_script_if_necessary(response):
+    if (not hasattr(response, "content") or 
+        getattr(response, "status_code", 0) != 200):
+
+        return
+
+    ctype = response.get("Content-Type", "").split(";")[0].strip().lower()
+    if ctype not in HTML_CONTENT_TYPES:
+        return
+
+    src = getattr(settings,
+                  "LIVEJS2_SCRIPT_SRC", 
+                  settings.STATIC_URL + "django_livejs2/live.js")
+
+    response.content = re.sub(
+        r"(</head>)", 
+        r"""<script type="text/javascript" src="{}"></script>\1""".format(src),
+        response.content,
+        count=1,
+        flags=re.I,
+    )
+
+    if response.get("Content-Length", None):
+        response["Content-Length"] = len(response.content)
 
 def process(request, response):
     if request.GET.get("live", None) == "0":
@@ -14,8 +42,15 @@ def process(request, response):
     elif (request.COOKIES.get("live", False) or
         request.GET.get("live", False)):
 
-        response.set_cookie("live", "1", max_age=24*60*60)
+        cookie_age = getattr(settings,
+                             "LIVEJS2_DISABLE_AFTER_INACTIVITY",
+                             24*60*60)
+        response.set_cookie("live", "1", max_age=cookie_age)
 
+        inject_script_if_necessary(response)
+
+        # We need to explicitly state that files are uncacheable, otherwise
+        # Firefox (and possibly other browsers) may cache them for 1 minute
         response["Pragma"] = "no-cache"
         response["Cache-Control"] = "no-cache"
         response["Expires"] = http_date()

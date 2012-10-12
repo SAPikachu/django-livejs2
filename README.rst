@@ -1,12 +1,11 @@
 ***************
-Overview
+django-livejs2
 ***************
 
 Integrates `live.js`_ into your django project. 
 
 There is already a project named django-livejs, so I added "2" to the name to avoid conflict. (Additionally I think my version is better than that one :P )
 
-***************
 Installation
 ***************
 
@@ -14,7 +13,6 @@ Installation
 
 2. Edit your ``settings.py`` to add ``'django_livejs2.middleware.LiveJsMiddleware'`` to ``MIDDLEWARE_CLASSES``. Also add  ``'django_livejs2'`` to ``INSTALLED_APPS`` if you want to use the shipped `live.js`_.
 
-***************
 Usage
 ***************
 
@@ -24,7 +22,6 @@ Disabling is also easy, visit any page with ``live=0`` in query string and you a
 
 Note: If ``settings.DEBUG`` is not ``True``, the module will be completely disabled since it is not really useful in production environment.
 
-***************
 Settings
 ***************
 

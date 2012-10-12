@@ -43,9 +43,11 @@ def process(request, response):
     elif (request.COOKIES.get("live", False) or
         request.GET.get(COOKIE_NAME, False)):
 
+        # After a bit of thinking, I can't find any real use of this setting.
+        # But since it has been written, just leave it here.
         cookie_age = getattr(settings,
                              "LIVEJS2_DISABLE_AFTER_INACTIVITY",
-                             24*60*60)
+                             60*60*24*365*10)
         response.set_cookie(COOKIE_NAME, "1", max_age=cookie_age)
 
         inject_script_if_necessary(response)

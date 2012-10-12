@@ -2,11 +2,14 @@
 
 from setuptools import setup
 
+with open("README.rst", "r") as f:
+    long_description = f.read()
+
 setup(
     name='django-livejs2',
     version='1.0',
     description='Integrate live.js into django site',
-    long_description='For detailed description and usage, please visit `project page <https://github.com/SAPikachu/django-livejs2>`_.',
+    long_description=long_description,
     author='Joe Hu (SAPikachu)',
     author_email='sapikachu@gmail.com',
     url='https://github.com/SAPikachu/django-livejs2',

@@ -10,6 +10,7 @@ from django.core.exceptions import MiddlewareNotUsed
 from django.contrib.staticfiles.handlers import StaticFilesHandler
 
 HTML_CONTENT_TYPES = ("text/html", "application/xhtml+xml")
+COOKIE_NAME = "DJANGO_LIVEJS2"
 
 def inject_script_if_necessary(response):
     if (not hasattr(response, "content") or 
@@ -38,14 +39,14 @@ def inject_script_if_necessary(response):
 
 def process(request, response):
     if request.GET.get("live", None) == "0":
-        response.delete_cookie("live")
+        response.delete_cookie(COOKIE_NAME)
     elif (request.COOKIES.get("live", False) or
-        request.GET.get("live", False)):
+        request.GET.get(COOKIE_NAME, False)):
 
         cookie_age = getattr(settings,
                              "LIVEJS2_DISABLE_AFTER_INACTIVITY",
                              24*60*60)
-        response.set_cookie("live", "1", max_age=cookie_age)
+        response.set_cookie(COOKIE_NAME, "1", max_age=cookie_age)
 
         inject_script_if_necessary(response)
 

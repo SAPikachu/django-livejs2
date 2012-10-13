@@ -1,1 +1,3 @@
 recursive-include django_livejs2/static *.*
+include README.rst
+include LICENSE

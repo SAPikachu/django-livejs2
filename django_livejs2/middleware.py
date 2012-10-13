@@ -40,8 +40,8 @@ def inject_script_if_necessary(response):
 def process(request, response):
     if request.GET.get("live", None) == "0":
         response.delete_cookie(COOKIE_NAME)
-    elif (request.COOKIES.get("live", False) or
-        request.GET.get(COOKIE_NAME, False)):
+    elif (request.COOKIES.get(COOKIE_NAME, False) or
+        request.GET.get("live", False)):
 
         # After a bit of thinking, I can't find any real use of this setting.
         # But since it has been written, just leave it here.
